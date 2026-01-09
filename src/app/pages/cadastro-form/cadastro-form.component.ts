@@ -4,10 +4,11 @@ import { CommonModule } from '@angular/common';
 import { RadioOptionComponent } from "../../shared/components/radio-option/radio-option.component";
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { ExperienceLevelComponent } from '../../shared/components/experience-level/experience-level.component';
+import { Router } from '@angular/router';
 
 const MODULES = [
   CommonModule,
-  ReactiveFormsModule
+  ReactiveFormsModule,
 ];
 
 const COMPONENTS = [
@@ -58,7 +59,10 @@ export class CadastroFormComponent implements OnInit{
     }
   ];
 
-  constructor(private fb: FormBuilder){}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router
+  ){}
 
   ngOnInit(): void {
     this.cadastroForm = this.fb.group({
@@ -82,6 +86,6 @@ export class CadastroFormComponent implements OnInit{
   }
 
   onAnterior(){
-    console.log("voltar para a etapa anterior");
+    this.router.navigate(['/cadastro/dados-pessoais'])
   }
 }
