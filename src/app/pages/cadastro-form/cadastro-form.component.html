@@ -18,10 +18,47 @@
             (selectionChange)="onAreaChange($event)"
           >  
           </app-radio-option>
+
+          <div *ngIf="cadastroForm.get('areaAtuacao')?.touched && 
+          cadastroForm.get('areaAtuacao')?.invalid"
+          class="cadastro-form__error">
+            Por favor, selecione uma área de atuação
+          </div>  
         </div>
 
-        <div>
+        <div class="cadastro-form__section">
+          <h3 class="cadastro-form__section-title">Nível de experiência</h3>
+
+          <app-experience-level
+          [levels]="niveisExperiencia"
+          [selectedLevel]="cadastroForm.get('nivelExperiencia')?.value"
+          (levelChange)="onNivelChange($event)">
+          </app-experience-level>
           
+          <div *ngIf="cadastroForm.get('nivelExperiencia')?.touched && 
+          cadastroForm.get('nivelExperiencia')?.invalid"
+          class="cadastro-form__error">
+            Por favor, selecione um nível de experiência
+          </div>  
+        </div>
+        <div class="cadastro-form__actions">
+          <app-button
+            text="Anterior"
+            type="outline"
+            icon="fas fa-arrow-left"
+            iconPosition="left"
+            (clicked)="onAnterior()">      
+          </app-button>
+
+          <app-button
+            text="Proximo"
+            type="primary"
+            icon="fas fa-arrow-right"
+            iconPosition="right"
+            [disabled]="cadastroForm.invalid"
+            (clicked)="onProximo()">
+          </app-button>
+
         </div>
       </form>
     </div>
