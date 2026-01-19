@@ -4,6 +4,8 @@ import { AbstractControl, AbstractControlOptions, FormBuilder, FormGroup, Reacti
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { CadastroService } from '../../shared/services/cadastro.service';
 import { Router } from '@angular/router';
+import { BehaviorSubject, Observable, of, startWith, switchMap, tap } from 'rxjs';
+import { Cidade, Estado, IbgeService } from '../../shared/services/ibge.service';
 
 export const senhasIguaisValidator: ValidatorFn = 
 (control: AbstractControl): ValidationErrors | null => {
@@ -29,14 +31,16 @@ export const senhasIguaisValidator: ValidatorFn =
 export class DadosPessoaisFormComponent implements OnInit{
   dadosPessoaisForm!: FormGroup;
 
-  estados = [
-    {sigla: 'AC', nome: 'Acre'}
-  ]
+  estado$!: Observable<Estado[]>;
+  cidade$!: Observable<Cidade[]>;
+
+  carregandoCidades$ = new BehaviorSubject<boolean>(false);
 
   constructor(
     private fb: FormBuilder,
     private router: Router,
-    private cadastroService: CadastroService
+    private cadastroService: CadastroService,
+    private ibgeService: IbgeService
   ){}
 
   ngOnInit(): void {
@@ -53,6 +57,9 @@ export class DadosPessoaisFormComponent implements OnInit{
       senha: ['', [Validators.required, Validators.minLength(6)]],
       confirmaSenha: ['', Validators.required]
     }, formOptions)
+
+    this.carregarEstados();
+    this.configurarListernerEstado();
   }
 
   onAnterior(): void {
@@ -69,6 +76,34 @@ export class DadosPessoaisFormComponent implements OnInit{
     }
   }
 
+  private carregarEstados(): void{
+    this.estado$ = this.ibgeService.getEstados();
+  }
+
+  private configurarListernerEstado(): void {
+    const estadoControl = this.dadosPessoaisForm.get('estado');
+
+    if(estadoControl){
+      this.cidade$ = estadoControl.valueChanges.pipe(
+        startWith(''),
+        tap(() => {
+          this.resetarCidade();
+          this.carregandoCidades$.next(true);
+        }),
+        switchMap(uf => {
+          if(uf){
+            return this.ibgeService.getCidades(uf).
+            pipe(
+              tap(() => this.carregandoCidades$.next(false))
+            )
+          }
+          this.carregandoCidades$.next(false);
+          return of([]);
+        })
+      )
+    }
+  }
+
   private salvarDadosAtuais(){
     const formValue = this.dadosPessoaisForm.value;
 
@@ -79,5 +114,9 @@ export class DadosPessoaisFormComponent implements OnInit{
       email: formValue.email,
       senha: formValue.senha
     })
+  }
+
+  private resetarCidade(): void {
+    this.dadosPessoaisForm.get('cidade')?.setValue('');
   }
 }
