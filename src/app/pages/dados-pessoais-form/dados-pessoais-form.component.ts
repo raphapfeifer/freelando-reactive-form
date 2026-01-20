@@ -3,7 +3,7 @@ import { CommonModule } from '@angular/common';
 import { AbstractControl, AbstractControlOptions, FormBuilder, FormGroup, ReactiveFormsModule, ValidationErrors, ValidatorFn, Validators } from '@angular/forms';
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { CadastroService } from '../../shared/services/cadastro.service';
-import { Router } from '@angular/router';
+import { Router, ɵEmptyOutletComponent } from '@angular/router';
 import { BehaviorSubject, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { Cidade, Estado, IbgeService } from '../../shared/services/ibge.service';
 
@@ -23,8 +23,9 @@ export const senhasIguaisValidator: ValidatorFn =
   imports: [
     CommonModule,
     ReactiveFormsModule,
-    ButtonComponent
-  ],
+    ButtonComponent,
+    ɵEmptyOutletComponent
+],
   templateUrl: './dados-pessoais-form.component.html',
   styleUrls: ['./dados-pessoais-form.component.scss']
 })
@@ -92,6 +93,7 @@ export class DadosPessoaisFormComponent implements OnInit{
         }),
         switchMap(uf => {
           if(uf){
+            console.log('passou aqui');
             return this.ibgeService.getCidades(uf).
             pipe(
               tap(() => this.carregandoCidades$.next(false))

@@ -30,8 +30,7 @@ export class IbgeService {
   }
 
   getCidades(uf: string): Observable<Cidade[]>{
-    return this.http.get<Cidade[]>(`${this.API_URL}/estados/${uf}/
-      municipios?orderBy=nome`).pipe(
+    return this.http.get<Cidade[]>(`${this.API_URL}/estados/${uf}/municipios?orderBy=nome`).pipe(
         retry(2)
       );
   }
