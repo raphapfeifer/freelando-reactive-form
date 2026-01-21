@@ -6,13 +6,14 @@ import { CadastroService } from '../../shared/services/cadastro.service';
 import { Router, ɵEmptyOutletComponent } from '@angular/router';
 import { BehaviorSubject, Observable, of, startWith, switchMap, tap } from 'rxjs';
 import { Cidade, Estado, IbgeService } from '../../shared/services/ibge.service';
+import { cpfValidator } from '../../shared/validators/cpf.validator';
 
 export const senhasIguaisValidator: ValidatorFn = 
 (control: AbstractControl): ValidationErrors | null => {
   const senha  = control.get('senha');
   const confirmaSenha = control.get('confirmaSenha');
 
-  return senha && confirmaSenha && senha.value !== confirmaSenha.value ? 
+  return senha && confirmaSenha && senha.value === confirmaSenha.value ? 
   null : {senhasNaoIguais: true};
 }
 
@@ -52,6 +53,7 @@ export class DadosPessoaisFormComponent implements OnInit{
 
     this.dadosPessoaisForm = this.fb.group({
       nomeCompleto: ['', Validators.required],
+      cpf: ['', [Validators.required, cpfValidator]],
       estado: ['', Validators.required],
       cidade: ['', Validators.required],
       email: ['', [Validators.required, Validators.email]],
