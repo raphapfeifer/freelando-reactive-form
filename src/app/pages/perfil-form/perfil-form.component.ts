@@ -1,11 +1,13 @@
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
 
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Habilidade } from '../../shared/models/habilidade.interface';
 import { ChipComponent } from '../../shared/components/chip/chip.component';
+import { CadastroService } from '../../shared/services/cadastro.service';
+import { Router } from '@angular/router';
 
 
 @Component({
@@ -20,9 +22,9 @@ import { ChipComponent } from '../../shared/components/chip/chip.component';
   templateUrl: './perfil-form.component.html',
   styleUrls: ['./perfil-form.component.scss']
 })
-export class PerfilFormComponent {
+export class PerfilFormComponent implements OnInit{
   perfilForm!: FormGroup;
-  fotoPreview: string | ArrayBuffer | undefined;
+  fotoPreview!: string | ArrayBuffer | null;
 
   habilidades: Habilidade[] = [
     { nome: 'Fullstack', selecionada: false },
@@ -45,7 +47,64 @@ export class PerfilFormComponent {
     'Espanhol'
   ];
 
-  onAnterior(): void {}
+  constructor(
+    private fb: FormBuilder,
+    private router: Router,
+    private cadastroService: CadastroService
+  ){}
 
-  onProximo(): void {}
+  ngOnInit(): void {
+    this.inicializarFormulario();
+  }
+
+  onAnterior(): void {
+    this.salvarDadosAtuais(),
+    this.router.navigate(['/cadastro/dados-pessoais']);
+  }
+
+  onProximo(): void {
+    if(this.perfilForm.valid){
+      this.salvarDadosAtuais();
+      this.router.navigate(['/cadastro/confirmacao']);
+    }
+  }
+
+  onFotoSelecionada(event: any){
+    const file = event.target.files[0];
+    if(file){
+      const reader = new FileReader();
+      reader.onload = () => {
+        this.fotoPreview = reader.result;
+        this.perfilForm.patchValue({foto: reader.result});
+      }
+      reader.readAsDataURL(file);
+    }
+  }
+
+  private inicializarFormulario(): void{
+    this.perfilForm = this.fb.group({
+      foto: [''],
+      resumo: [''],
+      habilidadesSelecionadas: [[]],
+      idiomas: this.fb.array([]),
+      portfolio: [''],
+      linkdin: ['']
+    })
+  }
+
+  private salvarDadosAtuais(): void {
+    const formValue = this.perfilForm.value;
+
+    this.cadastroService.updateCadastroData({
+      foto: this.fotoPreview,
+      resumo: formValue.resumo,
+      habilidadesSelecionadas: formValue.habilidadesSelecionadas,
+      idiomas: [],
+      portfolio: formValue.portfolio,
+      linkedin: formValue.linkdin
+    })
+
+  }
+
+
 }
