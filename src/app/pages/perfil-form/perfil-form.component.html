@@ -42,6 +42,22 @@
           </div>
         </div>
 
+        <div class="cadastro-form__filed">
+          <div class="cadastro-form__row cadastro-form__row--header">
+            <div class="cadastro-form__column">
+                <label class="cadastro-form__label">Idiomas</label>
+            </div>
+            <div class="cadastro-form__column">
+                <label class="cadastro-form__label">Nível</label>
+            </div>
+          </div>
+
+          <ng-container formArrayName="idiomas">
+            <div class="cadastro-form__row"></div>
+          </ng-container>
+
+        </div>
+
         <div class="cadastro-form__actions">
           <app-button
             text="Anterior"
