@@ -25,7 +25,21 @@
             </div>
               <input #fileInput type="file" accept="image/*" style="display: nome" (change)="onFotoSelecionada($event)">
           </div>
+        </div>
 
+        <div class="cadastro-form__field">
+          <label class="cadastro-form-label">Citr até 3 habilidades que você considera principais</label>
+
+          <div class="cadastro-form__chips">
+            <app-chip
+              *ngFor="let habilidade of habilidades"
+              [text]="habilidade.nome"
+              [selected]="habilidade.selecionada"
+              [disabled]="!habilidade.selecionada && 
+                perfilForm.get('habilidadesSelecionadas')?.value.length >= 3"
+                (click)="toggleHabilidade(habilidade)">
+            </app-chip>
+          </div>
         </div>
 
         <div class="cadastro-form__actions">
