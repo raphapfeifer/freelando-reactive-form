@@ -1,13 +1,14 @@
 
 import { Component, OnInit } from '@angular/core';
 import { CommonModule } from '@angular/common';
-import { FormBuilder, FormGroup, ReactiveFormsModule } from '@angular/forms';
+import { FormArray, FormBuilder, FormGroup, ReactiveFormsModule, Validators } from '@angular/forms';
 
 import { ButtonComponent } from '../../shared/components/button/button.component';
 import { Habilidade } from '../../shared/models/habilidade.interface';
 import { ChipComponent } from '../../shared/components/chip/chip.component';
 import { CadastroService } from '../../shared/services/cadastro.service';
 import { Router } from '@angular/router';
+import { Idioma } from '../../shared/models/idioma.interface';
 
 
 @Component({
@@ -92,6 +93,27 @@ export class PerfilFormComponent implements OnInit{
       this.perfilForm.patchValue({ habilidadesSelecionadas })
   }
 
+  get idiomasArray(): FormArray {
+    return this.perfilForm.get('idiomas') as FormArray;
+  }
+
+  adicionarIdioma(nome: string = '', nivel: string = ''): void{
+      const idiomaForm = this.fb.group({
+        nome: [nome, Validators.required],
+        nivel: [nivel, Validators.required]
+      });
+
+      this.idiomasArray.push(idiomaForm);
+  }
+
+  removerIdioma(index: number): void{
+    if(index === 0 && this.idiomasArray.at(0).get('nome')?.value === 'Português'){
+      return
+    }
+
+    this.idiomasArray.removeAt(index);
+  }
+
   private inicializarFormulario(): void{
     this.perfilForm = this.fb.group({
       foto: [''],
@@ -100,6 +122,17 @@ export class PerfilFormComponent implements OnInit{
       idiomas: this.fb.array([]),
       portfolio: [''],
       linkdin: ['']
+    });
+
+    this.adicionarIdioma('Português', 'Nativo');
+  }
+
+  private extrairIdiomas(): Idioma[]{
+    return this.idiomasArray.controls.map(control => {
+      return {
+        nome: control.get('nome')?.value,
+        nivel: control.get('nivel')?.value
+      };
     })
   }
 
@@ -110,7 +143,7 @@ export class PerfilFormComponent implements OnInit{
       foto: this.fotoPreview,
       resumo: formValue.resumo,
       habilidadesSelecionadas: formValue.habilidadesSelecionadas,
-      idiomas: [],
+      idiomas: this.extrairIdiomas(),
       portfolio: formValue.portfolio,
       linkedin: formValue.linkdin
     })
