@@ -26,6 +26,7 @@ import { Idioma } from '../../shared/models/idioma.interface';
 export class PerfilFormComponent implements OnInit{
   perfilForm!: FormGroup;
   fotoPreview!: string | ArrayBuffer | null;
+  caracteresRestantes: number = 70;
 
   habilidades: Habilidade[] = [
     { nome: 'Fullstack', selecionada: false },
@@ -56,6 +57,10 @@ export class PerfilFormComponent implements OnInit{
 
   ngOnInit(): void {
     this.inicializarFormulario();
+
+    this.perfilForm.get('resumo')?.valueChanges.subscribe(resumo => {
+      this.caracteresRestantes = 70 - resumo.length;
+    })
   }
 
   onAnterior(): void {
@@ -117,11 +122,11 @@ export class PerfilFormComponent implements OnInit{
   private inicializarFormulario(): void{
     this.perfilForm = this.fb.group({
       foto: [''],
-      resumo: [''],
+      resumo: ['', [Validators.required, Validators.maxLength(70)]],
       habilidadesSelecionadas: [[]],
       idiomas: this.fb.array([]),
-      portfolio: [''],
-      linkdin: ['']
+      portfolio: ['', Validators.pattern('https?;//.+')],
+      linkdin: ['', Validators.pattern('https?://(www\\.)?linkedin\\.com/.+')]
     });
 
     this.adicionarIdioma('Português', 'Nativo');
