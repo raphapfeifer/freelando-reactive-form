@@ -33,7 +33,49 @@
               </div>
             </div>
           </ng-container>
-        </ng-container>
+          </ng-container>
+          <ng-container *ngIf="hasField('estado') && hasField('cidade')">
+            <div class="cadastro-form__row">
+              <div class="cadastro-form__field cadastro-form__field--half">
+                <label for="estado" class="cadastro-form__label">{{ getFieldByName('estado').label }}</label>
+                <select
+                  id="estado"
+                  class="cadastro-form__select"
+                  formControlName="estado">
+                  <option value="" disabled selected>{{  getFieldByName('estado').placeholder || 'Selecione'}}</option>
+                  <ng-container *ngIf="estado$ | async as estados">
+                      <option *ngFor="let estado of estados" [value]="estado.sigla">{{ estado.nome }}</option>
+                  </ng-container>
+                </select>
+                <div *ngIf="dadosPessoaisForm.get('estado')?.invalid && dadosPessoaisForm.get('estado')?.touched"
+                class="cadastro-form__error">
+                  <ng-container *ngFor="let error of getFieldByName('estado').errorMessages | keyvalue">
+                    <span *ngIf="dadosPessoaisForm.get('estado')?.errors?.[error.key]">{{ error.value }}</span>
+                  </ng-container>
+                </div>
+              </div>
+
+              <div class="cadastro-form__field cadastro-form__field--half">
+                <label for="cidade" class="cadastro-form__label">{{ getFieldByName('cidade').label }}</label>
+                <select
+                  id="cidade"
+                  class="cadastro-form__select"
+                  formControlName="cidade"
+                  [disabled]="(carregandoCidades$ | async ) || !dadosPessoaisForm.get('estado')?.value">
+                  <option value="" disabled selected>{{ (carregandoCidades$ | async) ? 'Carregando...' : (getFieldByName('cidade').placeholder || 'Selecione') }}</option>
+                  <ng-container *ngIf="cidade$ | async as cidades">
+                    <option *ngFor="let cidade of cidades" [value]="cidade.nome">{{ cidade.nome }}</option>
+                  </ng-container>
+                </select>
+                <div *ngIf="dadosPessoaisForm.get('cidade')?.invalid && dadosPessoaisForm.get('cidade')?.touched"
+                class="cadastro-form__error">
+                  <ng-container *ngFor="let error of getFieldByName('cidade').errorMessages | keyvalue">
+                      <span *ngIf="dadosPessoaisForm.get('cidade')?.errors?.[error.key]">{{ error.value }}</span>
+                  </ng-container>
+                </div>
+              </div>
+            </div>
+          </ng-container>
     
        <div class="cadastro-form__actions">
           <app-button

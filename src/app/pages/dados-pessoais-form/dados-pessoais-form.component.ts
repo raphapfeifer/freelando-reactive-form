@@ -89,6 +89,14 @@ export class DadosPessoaisFormComponent implements OnInit{
     return field.type === type;
   }
 
+  hasField(name: string): boolean {
+    return this.formConfig.fields.some(field => field.formControlName === name);
+  }
+
+  getFieldByName(name: string): FormFieldBase{
+    return this.formConfig.fields.find(field => field.formControlName === name) || {} as FormFieldBase;
+  }
+
   private carregarEstados(): void{
     this.estado$ = this.ibgeService.getEstados();
   }
