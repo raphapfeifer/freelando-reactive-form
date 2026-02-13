@@ -76,6 +76,36 @@
               </div>
             </div>
           </ng-container>
+
+          <ng-container *ngIf="hasField('email')">
+            <div class="cadastro-form__field">
+              <label for="email" class="cadastro-form__label">{{ getFieldByName('email').label }}</label>
+              <div class="input-container">
+                <input
+                  id="email"
+                  type="email"
+                  class="cadastro-form__input"
+                  [ngClass]="{'cadastro-form__input--error': dadosPessoaisForm.get('email')?.invalid && dadosPessoaisForm.get('email')?.touched,
+                    'cadastro-form__input--pending': dadosPessoaisForm.get('email')?.pending}"
+                  formControlName="email">
+              </div>
+
+              <div class="cadastro-form__error-container">
+                <div *ngIf="dadosPessoaisForm.get('email')?.invalid && dadosPessoaisForm.get('email')?.touched && !dadosPessoaisForm.get('email')?.pending" class="cadastro-form__error">
+                  <ng-container *ngFor="let error of getFieldByName('email').errorMessages | keyvalue ">
+                    <span *ngIf="dadosPessoaisForm.get('email')?.errors?.[error.key]">{{ error.value }}</span>
+                  </ng-container>
+                  <span *ngIf="dadosPessoaisForm.get('email')?.errors?.['emailExiste']" class="cadastro-form__error cadastro-form__error--async">
+                      Este email já existe
+                  </span>
+                </div>
+
+                <div *ngIf="dadosPessoaisForm.get('email')?.pending" class="cadastro-form__pending">
+                    Verificando disponibilizade...
+                </div>
+              </div>
+            </div>
+          </ng-container>
     
        <div class="cadastro-form__actions">
           <app-button
