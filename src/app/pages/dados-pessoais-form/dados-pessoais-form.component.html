@@ -106,6 +106,43 @@
               </div>
             </div>
           </ng-container>
+
+          <ng-container *ngIf="hasField('senha') && hasField('confirmaSenha')">
+            <div class="cadastro-form__row">
+              <div class="cadastro-form__field cadastro-form__field--half">
+                <label for="senha" class="cadastro-form__label">{{ getFieldByName('senha').label }}</label>
+                <input
+                  id="senha"
+                  type="password"
+                  class="cadastro-form__input"
+                  formControlName="senha">
+                <div *ngIf="dadosPessoaisForm.get('senha')?.invalid && dadosPessoaisForm.get('senha')?.touched" class="cadastro-form__error">
+                  <ng-container *ngFor="let error of getFieldByName('senha').errorMessages | keyvalue">
+                      <span *ngIf="dadosPessoaisForm.get('senha')?.errors?.[error.key]">{{ error.value }}</span>
+                  </ng-container>
+                </div>
+              </div>
+
+              <div class="cadastro-form__field cadastro-form__field--half">
+                <label for="confirmaSenha" class="cadastro-form__">{{ getFieldByName('confirmaSenha').label }}</label>
+                <input
+                  id="confirmaSenha"
+                  type="password"
+                  class="cadastro-form__input"
+                  formControlName="confirmaSenha">
+                <div *ngIf="dadosPessoaisForm.get('confirmaSenha')?.invalid && dadosPessoaisForm.get('confirmaSenha')?.touched" class="cadastro-form__error">
+                  <ng-container *ngFor="let error of getFieldByName('confirmaSenha').errorMessages | keyvalue">
+                      <span *ngIf="dadosPessoaisForm.get('confirmaSenha')?.errors?.[error.key]"></span>
+                  </ng-container>
+                </div>  
+              </div>
+            </div>
+          </ng-container>
+
+          <div *ngIf="dadosPessoaisForm.errors?.['senhasNaoIguais'] && dadosPessoaisForm.get('confirmaSenha')?.touched" class="cadastro-form__error">
+              As senhas não coincidem
+          </div>
+
     
        <div class="cadastro-form__actions">
           <app-button
